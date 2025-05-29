@@ -1,0 +1,26 @@
+{
+	"name": "aci-nimsir",
+	"version": "1.0.0",
+	"description": "Automatic CSV Interpreter for NIFC Incident Management SItuation Report",
+	"main": "main.bash",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/thelegendfox/aci-nimsir.git"
+	},
+	"author": "thelegendfox",
+	"license": "UNLICENSED",
+	"bugs": {
+		"url": "https://github.com/thelegendfox/aci-nimsir/issues"
+	},
+	"homepage": "https://github.com/thelegendfox/aci-nimsir#readme",
+	"dependencies": {
+		"csv": "^6.3.11",
+		"https": "^1.0.0",
+		"path": "^0.12.7",
+		"pdf-parse": "^1.1.1"
+	},
+	"private": true
+}
