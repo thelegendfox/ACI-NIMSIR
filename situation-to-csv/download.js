@@ -1,14 +1,14 @@
 /**
- * Takes a PDF, downloads it to the system, and parses it.
+ * Takes a PDF, downloads it to the system, and parses its pagenum, metadata, info, and text.
  *
  * @param {string} link A direct link to fetch the PDF from. Default the NIFC sitreprt. By default, overwrites any previously saved PDFs.
- * @param {string} directory The directory to save the downloaded PDF to. By default, makes/uses a ./downloads directory.
+ * @param {string} directory The directory to save the downloaded PDF to. By default, makes/uses a ./downloads/ directory.
  * @returns {object}
  */
 
 const getPdf = async function downloadAndParsePDF(
 	link = "https://www.nifc.gov/nicc-files/sitreprt.pdf",
-	directory = "./downloads"
+	directory = "./downloads/"
 ) {
 	const fs = require("fs");
 	const pdf = require("pdf-parse");
@@ -17,19 +17,35 @@ const getPdf = async function downloadAndParsePDF(
 	try {
 		console.log("Downloading PDF...");
 
-		// Download the PDF
-		const response = await fetch(
-			"https://www.nifc.gov/nicc-files/sitreprt.pdf"
-		);
+		let response;
 
-		if (!response.ok) {
-			throw new Error(`HTTP error! status: ${response.status}`);
+		// Download the PDF
+
+		try {
+			response = await fetch(link); // need it global, sorgy
+
+			if (!response.ok) {
+				throw new Error(`HTTP error! Status: ${response.status}`);
+			} else {
+				console.log("PDF successfully downloaded.");
+			}
+		} catch (e) {
+			console.error(
+				`${Ansi.BgRed}${Ansi.Bright}${Ansi.Blink}ERROR:${Ansi.Reset} Could not download PDF.`,
+				e
+			);
+			return {
+				pageNum: "",
+				metadata: "",
+				info: "",
+				text: "",
+			};
 		}
 
 		const arrayBuffer = await response.arrayBuffer();
 		const buffer = Buffer.from(arrayBuffer);
 
-		const downloadDir = "./downloads";
+		const downloadDir = directory;
 		if (!fs.existsSync(downloadDir)) {
 			fs.mkdirSync(downloadDir, { recursive: true });
 		}

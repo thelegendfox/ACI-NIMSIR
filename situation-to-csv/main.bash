@@ -37,7 +37,7 @@ if [ -d "$directory" ]; then
         fi
     fi
 else
-    echo "Directory doesn't exist."
+    echo "Directory does not exist."
 fi
 
 node tocsv.js
