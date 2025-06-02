@@ -3,9 +3,7 @@ const pdfParse = require("pdf-parse");
 const https = require("https");
 const path = require("path");
 const Ansi = require("./ansi.js");
-const csv = (async () => {
-	await import("../node_modules/csv/lib/index.js");
-})();
+const csv = require("../node_modules/csv/lib/index.js");
 const getPdf = require("./download.js");
 
 let overwrite = true; // Overwrites posting oldpdfinfo
@@ -31,18 +29,6 @@ let overwrite = true; // Overwrites posting oldpdfinfo
 			return item?.[0]?.replace(/\s+/g, " ").trim() || null;
 		}
 	}
-
-	// let nationalPlLevel = 0;
-	// let nationalFireActivity = {
-	// 	initialAttackActivity: "",
-	// 	newLargeIncidents: 0,
-	// 	largeFiresContained: 0,
-	// 	uncontainedLargeFires: 0,
-	// 	cimtsCommitted: 0,
-	// 	type1ImtsCommitted: 0,
-	// 	nimosCommitted: 0,
-	// 	notes: "", // Before Understanding the IMSR, after NIMOs
-	// };
 
 	let nationalPlLevel = regexReplacement(
 		pdfInfo.text.match(/(?<=National Preparedness Level )([\s\S]*?)(?=\r?\n)/)
@@ -153,9 +139,12 @@ let overwrite = true; // Overwrites posting oldpdfinfo
 	console.log(socalFireActivity);
 	console.log(weather + "\n\n");
 	console.log(sixMinutesForSafety);
-})();
 
-/* Functions */
+	csv.generate({
+		delimiter: "|",
+		length: 1,
+	}).pipe; // PL level
+})();
 
 // Get sitreprt2.pdf
 async function getOldPdf() {

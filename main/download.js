@@ -22,7 +22,7 @@ const getPdf = async function downloadAndParsePDF(
 		// Download the PDF
 
 		try {
-			response = await fetch(link); // need it global, sorgy
+			response = await fetch(link);
 
 			if (!response.ok) {
 				throw new Error(`HTTP error! Status: ${response.status}`);
