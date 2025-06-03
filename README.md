@@ -1,11 +1,13 @@
 # NIFC Incident Management Situation Report to Webhook Module ("SITREPRT")
 
-SITREPRT (non-acronym) is a system based on NodeJS designed to take the [NIFC Incident Management Situation Report](https://www.nifc.gov/nicc-files/sitreprt.pdf "Found at www.nifc.gov/nicc-files/sitreprt.pdf") (designed for wildland firefighters) and turn it into an easily interpretable webhook containing only critical information. This is primarily for use in Hellfire Helibase, though it can be used in other circumstances.
+SITREPRT (non-acronym) is a system based on NodeJS designed to take the [NIFC Incident Management Situation Report](https://www.nifc.gov/nicc-files/sitreprt.pdf "Found at www.nifc.gov/nicc-files/sitreprt.pdf") (designed for wildland firefighters) and turn it into an easily interpretable webhook containing only critical information.
 
 SITREPRT is currently _very_ in-progress, and no features are finalized.
 
+SITREPRT is intended for use in Hellfire Helibase, as implied by the files specifically pointing to that and having custom Hellfire Helibase assets, as well as how the function is run. Under the CC BY-SA 4.0 license (specified below) you are free to modify it by that license; however, this will take a non-zero amount of coding knowledge. If you would like this to
+
 <a href="https://github.com/thelegendfox/SITREPRT/">SITREPRT</a> © 2025 by <a href="https://github.com/thelegendfox/">jadedcrown</a> is licensed under <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a><br>
-_(The NIFC Incident Management Situation Report is not copyrighted by jadedcrown and is in the public domain.)_
+_(U.S. Government products, such as the NIFC Incident Management Situation Report and Storm Prediction Center Fire/Categorical Outlooks are published under the Public Domain. @jadedcrown claims no copyright over these.)_
 
 =============================
 

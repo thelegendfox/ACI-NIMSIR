@@ -17,6 +17,7 @@
 	},
 	"homepage": "https://github.com/thelegendfox/aci-nimsir#readme",
 	"dependencies": {
+		"axios": "^1.9.0",
 		"csv": "^6.3.11",
 		"https": "^1.0.0",
 		"path": "^0.12.7",

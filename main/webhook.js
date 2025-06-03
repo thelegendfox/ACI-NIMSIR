@@ -318,13 +318,22 @@ Please see the \`Misc\` section of the Morning Report for resources and fire inf
 	};
 	console.log(wholeWeather.find((i) => i.number === 1));
 
-	let weather = [];
+	let weather = [
+		[null], // to match the numbers of the forecast provided by nws (WHY DIDNT THEY START WITH 0 I HATE THEM)
+	];
 
-	// if (misc.nationalPlLevel.includes("1")) {
-	for (let i = 0; i < 15; i++) {
+	let weatherFields;
+
+	for (let i = 1; i < 15; i++) {
 		let forecast = getDetailedWeather(i);
 		if (!forecast) {
-			console.log(i);
+			console.warn(
+				`${Ansi.BgYellow}${Ansi.Bright}${Ansi.Blink}WARNING:${Ansi.Reset} The forecast (with a number of ${i}) was not found.`
+			);
+			forecast = {
+				day: "N/A",
+				detailedForecast: "Forecast not found",
+			};
 			continue;
 		}
 		weather.push([
@@ -334,9 +343,38 @@ Please see the \`Misc\` section of the Morning Report for resources and fire inf
 			},
 		]);
 	}
-	// }
-	console.log("\n\n");
-	console.log(weather);
+
+	if (misc.nationalPlLevel.includes(1)) {
+		weatherFields = `
+		7-Day Forecast for Los Padres National Forest:
+		${forecast[1].day}:
+		${forecast[1].detailedForecast}
+		${forecast[2].day}:
+		${forecast[2].detailedForecast}
+		${forecast[3].day}:
+		${forecast[3].detailedForecast}
+		${forecast[4].day}:
+		${forecast[4].detailedForecast}
+		${forecast[5].day}:
+		${forecast[5].detailedForecast}
+		${forecast[6].day}:
+		${forecast[6].detailedForecast}
+		${forecast[7].day}:
+		${forecast[7].detailedForecast}
+		${forecast[8].day}:
+		${forecast[8].detailedForecast}
+		${forecast[9].day}:
+		${forecast[9].detailedForecast}
+		${forecast[10].day}:
+		${forecast[10].detailedForecast}
+		${forecast[12].day}:
+		${forecast[12].detailedForecast}
+		${forecast[13].day}:
+		${forecast[13].detailedForecast}
+		${forecast[14].day}:
+		${forecast[14].detailedForecast}
+		`; // make this look better, self!
+	}
 
 	let message = JSON.stringify({
 		content: content, // if you don't want any of these values, make them null
