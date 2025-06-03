@@ -1,9 +1,6 @@
 const fs = require("fs");
 const pdfParse = require("pdf-parse");
-const https = require("https");
-const path = require("path");
 const Ansi = require("./ansi.js");
-// const csv = require("../node_modules/csv/lib/index.js");
 const getPdf = require("./download.js");
 const secret = require("./secret.json");
 
@@ -208,7 +205,7 @@ The 6 Minutes for Safety topic of the day is [${sixMinutesForSafety}](${links.si
 function post(content, fields, thumbnail, webhook) {
 	let messageBody = `
 	-# *Created with @jadedcrown's [SITREPRT](${secret.repo})*
-	
+
 	`;
 	let message = JSON.stringify({
 		content: content, // if you don't want any of these values, make them null

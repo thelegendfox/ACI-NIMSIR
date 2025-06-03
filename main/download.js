@@ -12,7 +12,6 @@ const getPdf = async function downloadAndParsePDF(
 ) {
 	const fs = require("fs");
 	const pdf = require("pdf-parse");
-	const https = require("https");
 	const path = require("path");
 	try {
 		console.log("Downloading PDF...");
