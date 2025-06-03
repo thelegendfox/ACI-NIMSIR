@@ -3,6 +3,7 @@ const pdfParse = require("pdf-parse");
 const Ansi = require("./ansi.js");
 const getPdf = require("./download.js");
 const secret = require("./secret.json");
+const axios = require("axios");
 
 let overwrite = true; // Overwrites posting oldpdfinfo
 
@@ -164,7 +165,7 @@ ${nationalFireActivity.postTimes}
 	let content2 = `
 ## Southern California Fire Activity
 
-Socal Preparedness Level: \`${socalFireActivity.plLevel}\`.
+SoCal Preparedness Level: \`${socalFireActivity.plLevel}\`.
 New fires: \`${socalFireActivity.newFires}\`.
 New large incidents: \`${socalFireActivity.newLargeIncidents}\`.
 Uncontained large fires: \`${socalFireActivity.uncontainedLargeFires}\`.
@@ -183,90 +184,234 @@ ${weather}
 The 6 Minutes for Safety topic of the day is [${sixMinutesForSafety}](${links.sixMinutesForSafety})
 	`;
 
-	let fieldInfo = [
+	let nationalFieldInfo = [
 		{
-			name: null,
-			value: null,
-			inline: null,
+			name: "National Preparedness Level",
+			value: `\`${nationalPlLevel}\`.`,
+			inline: false,
+		},
+		{
+			name: "Initial Attack Activity",
+			value: `\`${nationalFireActivity.initialAttackActivity}\`.`,
+			inline: false,
+		},
+		{
+			name: "New Large Incidents",
+			value: `\`${nationalFireActivity.newLargeIncidents}\`.`,
+			inline: true,
+		},
+		{
+			name: "Large Fires Contained",
+			value: `\`${nationalFireActivity.largeFiresContained}\`.`,
+			inline: true,
+		},
+		{
+			name: "Uncontained Large Fires",
+			value: `\`${nationalFireActivity.uncontainedLargeFires}\`.`,
+			inline: true,
+		},
+		{
+			name: "CIMTs Committed",
+			value: `\`${nationalFireActivity.cimtsCommitted}\`.`,
+			inline: true,
+		},
+		{
+			name: "Type 1 IMTs Committed",
+			value: `\`${nationalFireActivity.type1ImtsCommitted}\`.`,
+			inline: true,
+		},
+		{
+			name: "NIMOs Committed",
+			value: `\`${nationalFireActivity.nimosCommitted}\`.`,
+			inline: true,
+		},
+		{
+			name: "Notes",
+			value: nationalFireActivity.notes,
+			inline: false,
+		},
+		{
+			name: "Misc",
+			value: nationalFireActivity.postTimes,
+			inline: false,
 		},
 	];
+
+	let socalFieldInfo = [
+		{
+			name: "SoCal Preparedness Level",
+			value: `\`${socalFireActivity.plLevel}\`.`,
+			inline: false,
+		},
+		{
+			name: "SoCal New Fires",
+			value: `\`${socalFireActivity.newFires}\`.`,
+			inline: true,
+		},
+		{
+			name: "SoCal New Large Incidents",
+			value: `\`${socalFireActivity.newLargeIncidents}\`.`,
+			inline: true,
+		},
+		{
+			name: "SoCal Uncontained Large Fires",
+			value: `\`${socalFireActivity.uncontainedLargeFires}\`.`,
+			inline: true,
+		},
+		{
+			name: "Misc",
+			value: `${socalFireActivity.fireDetails.trim()}`,
+			inline: false,
+		},
+	];
+
+	let misc = {
+		weather: weather,
+		smfs: sixMinutesForSafety,
+		links: links,
+		dutyOfficer: "None",
+		nationalPlLevel: nationalPlLevel,
+	};
 
 	console.log(content1.length, content2.length, content3.length);
 	console.log(nationalFireActivity.postTimes);
 
 	post(
 		"<@&1379139175399428207>",
-		fieldInfo,
+		nationalFieldInfo,
+		socalFieldInfo,
+		misc,
 		secret.thumbnailImage,
 		secret.webhook
 	);
 })();
 
-function post(content, fields, thumbnail, webhook) {
-	let messageBody = `
-	-# *Created with @jadedcrown's [SITREPRT](${secret.repo})*
+async function post(
+	content,
+	nationalFieldInfo,
+	socalFieldInfo,
+	misc,
+	thumbnail,
+	webhook
+) {
+	const getTimestamp = (timestamp = Date.now()) =>
+		`<t:${Math.round(timestamp / 1000)}:F>`;
+	let mainEmbedText = `
+Good morning! It's currently ${getTimestamp()}.
 
+## Duty Officer: \`${misc.dutyOfficer}\`
+
+Resource Availability:
+Interagency Resources: None available.
+Mutual Aid Resources: None available.
+Complex Incident Management Team(s): None available.
+
+Please see the \`Misc\` section of the Morning Report for resources and fire information.
+	
+-# Morning Report automatically created & sent with @jadedcrown's [SITREPRT](https://github.com/thelegendfox/SITREPRT-Hook) based on the [NIFC Incident Mangement Situation Report](https://www.nifc.gov/nicc-files/sitreprt.pdf).
 	`;
+
+	const wholeWeather = await getWeather(34.54167, -119.80917); // los padres national forest coords
+
+	const getDetailedWeather = (num) => {
+		return wholeWeather.find((i) => i.number === num);
+	};
+	console.log(wholeWeather.find((i) => i.number === 1));
+
+	let weather = [];
+
+	// if (misc.nationalPlLevel.includes("1")) {
+	for (let i = 0; i < 15; i++) {
+		let forecast = getDetailedWeather(i);
+		if (!forecast) {
+			console.log(i);
+			continue;
+		}
+		weather.push([
+			{
+				day: forecast.name,
+				detailedForecast: forecast.detailedForecast,
+			},
+		]);
+	}
+	// }
+	console.log("\n\n");
+	console.log(weather);
+
 	let message = JSON.stringify({
 		content: content, // if you don't want any of these values, make them null
 		embeds: [
 			{
-				title: title,
-				thumbnail: { url: thumbnail },
-				body: "",
-				/*fields: fields,
-				footer: {
-					text: "Hellfire Helibase",
-				},
-				image: {
-					url: "https://www.spc.noaa.gov/products/outlook/day1otlk.gif",
-				},
-				image: {
-					url: "https://www.spc.noaa.gov/products/fire_wx/day1fireotlk-overview.gif",
-				},*/
-			},
-			{
 				title: "Hellfire Helibase ~ Morning Report",
 				thumbnail: { url: thumbnail },
-				body: "",
+
+				description: mainEmbedText,
+				color: 7340032,
 				footer: {
-					text: "Hellfire Helibase",
+					text: `Hellfire Helibase`,
+				},
+			},
+			{
+				title: "Hellfire Helibase ~ National Fire Information",
+				fields: nationalFieldInfo,
+				color: 7340032,
+				footer: {
+					text: `Hellfire Helibase`,
+				},
+			},
+			{
+				title: "Hellfire Helibase ~ SoCal Fire Information",
+				fields: socalFieldInfo,
+				color: 7340032,
+				footer: {
+					text: `Hellfire Helibase`,
+				},
+			},
+			{
+				title: "Hellfire Helibase ~ Misc",
+				description: `
+## Fire Information
+
+[Forest Alerts and Fire Danger Status](<https://www.fs.usda.gov/r05/lospadres/alerts>)
+
+## Other Resources
+
+[2025 Incident Response Pocket Guide](<https://fs-prod-nwcg.s3.us-gov-west-1.amazonaws.com/s3fs-public/publication/pms461.pdf?VersionId=5jVfeVueiTHKLajwBHssv7sEh4Gv2QFm>)
+[Incident Commander's Organizer](<https://fs-prod-nwcg.s3.us-gov-west-1.amazonaws.com/s3fs-public/publication/pms206.pdf?VersionId=r2vd.HpKEspr1FtuIpFM8YRNbM7.WuW2>)
+[Initial Attack Fire Size Up](<https://gacc.nifc.gov/nrcc/dc/mtmdc/Forms/Dispatch/MDC%20IA%20Size%20Up%20Form%20(Fillable).pdf>)
+
+# **__Six Minutes for Safety__**
+The Six Minutes for Safety topic of the day is [${misc.sixMinutesForSafety}](${misc.links.sixMinutesForSafety})
+				`,
+				color: 7340032,
+				footer: {
+					text: `Hellfire Helibase`,
+				},
+			},
+			{
+				title: "Storm Prediction Center ~ Convective Outlook",
+				image: {
+					url: "https://www.spc.noaa.gov/products/outlook/day1otlk_1300.gif",
+				},
+				color: 7340032,
+				footer: {
+					text: `Hellfire Helibase`,
+				},
+			},
+			{
+				title: "Storm Prediction Center ~ Fire Weather Outlook",
+				image: {
+					url: "https://www.spc.noaa.gov/products/fire_wx/day1fireotlk-overview.gif",
+				},
+				color: 7340032,
+				footer: {
+					text: `Hellfire Helibase`,
 				},
 			},
 		],
 	});
 
-	/*
-	content = 
-title = da
-fields = d
-thumbnail 
-webhook = 
-threadName
-    $field_info = [
-        [
-            "name" => $title,
-            "value" => $body,
-            "inline" => true
-        ],
-        [
-            "name" => 'Submitting User',
-            "value" => "Name: $server_name Discriminator: $discriminator ID: $discord_id",
-            "inline" => true
-        ],
-        [
-            "name" => 'Contact',
-            "value" => $contact,
-            "inline" => false
-        ],
-
-    ];
-	*/
-
-	sendWebhook(webhook, message1);
-	setTimeout(sendWebhook, 2000, webhook, message2);
-	setTimeout(sendWebhook, 4000, webhook, message3);
-	// delayed to prevent ratelimiting
+	// sendWebhook(webhook, message);
 }
 
 async function sendWebhook(webhook, message) {
@@ -331,5 +476,21 @@ async function getOldPdf() {
 			info: "",
 			text: "",
 		};
+	}
+}
+
+async function getWeather(lat, lon) {
+	try {
+		const headers = { "User-Agent": "email@example.com" };
+
+		const pointUrl = `https://api.weather.gov/points/${lat},${lon}`;
+		const pointRes = await axios.get(pointUrl, { headers });
+		const forecastUrl = pointRes.data.properties.forecast;
+
+		const forecastRes = await axios.get(forecastUrl, { headers });
+
+		return forecastRes.data.properties.periods;
+	} catch (error) {
+		console.error("Error:", error.message);
 	}
 }

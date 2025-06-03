@@ -18,8 +18,6 @@ const getPdf = async function downloadAndParsePDF(
 
 		let response;
 
-		// Download the PDF
-
 		try {
 			response = await fetch(link);
 
