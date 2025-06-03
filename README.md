@@ -4,7 +4,8 @@ SITREPRT (non-acronym) is a system based on NodeJS designed to take the [NIFC In
 
 SITREPRT is currently _very_ in-progress, and no features are finalized.
 
-SITREPRT is made by thelegendfox (also known as "jadedcrown" or "Rockethead293"). All Rights Reserved; SITREPRT is currently not permitted for use without written approval.
+<a href="https://github.com/thelegendfox/SITREPRT/">SITREPRT</a> © 2025 by <a href="https://github.com/thelegendfox/">jadedcrown</a> is licensed under <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a><img src="https://mirrors.creativecommons.org/presskit/icons/cc.svg" style="max-width: 1em;max-height:1em;margin-left: .2em;"><img src="https://mirrors.creativecommons.org/presskit/icons/by.svg" style="max-width: 1em;max-height:1em;margin-left: .2em;"><img src="https://mirrors.creativecommons.org/presskit/icons/sa.svg" style="max-width: 1em;max-height:1em;margin-left: .2em;"><br>
+_(The NIFC Incident Management Situation Report is not copyrighted by jadedcrown and is in the public domain.)_
 
 =============================
 
