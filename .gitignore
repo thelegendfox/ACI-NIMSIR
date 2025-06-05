@@ -137,3 +137,4 @@ dist
 
 # custom
 *secret*
+./main/downloads/*.pdf

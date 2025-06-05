@@ -1,11 +1,16 @@
 const fs = require("fs");
 const pdfParse = require("pdf-parse");
-const Ansi = require("./ansi.js");
-const getPdf = require("./download.js");
+const Ansi = require("./ansi.js"); // ansi escape codes, for terminal coloring
+const getPdf = require("./download.js"); // downloader for old pdf
 const secret = require("./secret.json");
 const axios = require("axios");
 
 let overwrite = true; // Overwrites posting oldpdfinfo
+
+/*
+6mfs still undefined
+misc embed needs to be Bigger
+*/
 
 (async function main() {
 	const pdfInfo = await getPdf();
@@ -130,14 +135,6 @@ let overwrite = true; // Overwrites posting oldpdfinfo
 		),
 		false
 	); // replace ' ' with + to add to the link
-
-	// console.log(nationalPlLevel + "\n\n");
-	// console.log(nationalFireActivity);
-	// console.log(links);
-	// console.log(socalFireActivity);
-	// console.log(weather + "\n\n");
-	// console.log(sixMinutesForSafety);
-	console.log(nationalFireActivity.notes);
 
 	let content1 = `
 # HELLFIRE HELIBASE MORNING REPORT FOR LOS PADRES NATIONAL FOREST
@@ -270,6 +267,10 @@ The 6 Minutes for Safety topic of the day is [${sixMinutesForSafety}](${links.si
 		smfs: sixMinutesForSafety,
 		links: links,
 		dutyOfficer: "None",
+		resourcesAvailable: {
+			interagency: "None available",
+			simts: "None available", // Complex Incident Management Team(s), IMT3/2/1, rolled into one
+		},
 		nationalPlLevel: nationalPlLevel,
 	};
 
@@ -301,22 +302,21 @@ Good morning! It's currently ${getTimestamp()}.
 
 ## Duty Officer: \`${misc.dutyOfficer}\`
 
-Resource Availability:
-Interagency Resources: None available.
-Mutual Aid Resources: None available.
-Complex Incident Management Team(s): None available.
+### Resource Availability
+Interagency/Mutual Aid Resources: \`${misc.resourcesAvailable.interagency}\`.
+Special Incident Management Teams: \`${misc.resourcesAvailable.simts}\`.\*
+-# \* For more information on SIMTs, see [not added].
 
 Please see the \`Misc\` section of the Morning Report for resources and fire information.
 	
 -# Morning Report automatically created & sent with @jadedcrown's [SITREPRT](https://github.com/thelegendfox/SITREPRT-Hook) based on the [NIFC Incident Mangement Situation Report](https://www.nifc.gov/nicc-files/sitreprt.pdf).
 	`;
 
-	const wholeWeather = await getWeather(34.54167, -119.80917); // los padres national forest coords
+	/*const wholeWeather = await getWeather(34.54167, -119.80917); // los padres national forest coords
 
 	const getDetailedWeather = (num) => {
 		return wholeWeather.find((i) => i.number === num);
 	};
-	console.log(wholeWeather.find((i) => i.number === 1));
 
 	let weather = [
 		[null], // to match the numbers of the forecast provided by nws (WHY DIDNT THEY START WITH 0 I HATE THEM)
@@ -342,39 +342,7 @@ Please see the \`Misc\` section of the Morning Report for resources and fire inf
 				detailedForecast: forecast.detailedForecast,
 			},
 		]);
-	}
-
-	if (misc.nationalPlLevel.includes(1)) {
-		weatherFields = `
-		7-Day Forecast for Los Padres National Forest:
-		${forecast[1].day}:
-		${forecast[1].detailedForecast}
-		${forecast[2].day}:
-		${forecast[2].detailedForecast}
-		${forecast[3].day}:
-		${forecast[3].detailedForecast}
-		${forecast[4].day}:
-		${forecast[4].detailedForecast}
-		${forecast[5].day}:
-		${forecast[5].detailedForecast}
-		${forecast[6].day}:
-		${forecast[6].detailedForecast}
-		${forecast[7].day}:
-		${forecast[7].detailedForecast}
-		${forecast[8].day}:
-		${forecast[8].detailedForecast}
-		${forecast[9].day}:
-		${forecast[9].detailedForecast}
-		${forecast[10].day}:
-		${forecast[10].detailedForecast}
-		${forecast[12].day}:
-		${forecast[12].detailedForecast}
-		${forecast[13].day}:
-		${forecast[13].detailedForecast}
-		${forecast[14].day}:
-		${forecast[14].detailedForecast}
-		`; // make this look better, self!
-	}
+	}*/
 
 	let message = JSON.stringify({
 		content: content, // if you don't want any of these values, make them null
@@ -382,7 +350,6 @@ Please see the \`Misc\` section of the Morning Report for resources and fire inf
 			{
 				title: "Hellfire Helibase ~ Morning Report",
 				thumbnail: { url: thumbnail },
-
 				description: mainEmbedText,
 				color: 7340032,
 				footer: {
@@ -407,6 +374,7 @@ Please see the \`Misc\` section of the Morning Report for resources and fire inf
 			},
 			{
 				title: "Hellfire Helibase ~ Misc",
+				thumbnail: { url: thumbnail },
 				description: `
 ## Fire Information
 
@@ -417,30 +385,15 @@ Please see the \`Misc\` section of the Morning Report for resources and fire inf
 [2025 Incident Response Pocket Guide](<https://fs-prod-nwcg.s3.us-gov-west-1.amazonaws.com/s3fs-public/publication/pms461.pdf?VersionId=5jVfeVueiTHKLajwBHssv7sEh4Gv2QFm>)
 [Incident Commander's Organizer](<https://fs-prod-nwcg.s3.us-gov-west-1.amazonaws.com/s3fs-public/publication/pms206.pdf?VersionId=r2vd.HpKEspr1FtuIpFM8YRNbM7.WuW2>)
 [Initial Attack Fire Size Up](<https://gacc.nifc.gov/nrcc/dc/mtmdc/Forms/Dispatch/MDC%20IA%20Size%20Up%20Form%20(Fillable).pdf>)
+[Hellfire Helibase Website](https://hellfire.site)
+
+To suggest improvements to Hellfire Helibase, use <#1360098488024563824> (if this is locked, ask an officer).
 
 # **__Six Minutes for Safety__**
-The Six Minutes for Safety topic of the day is [${misc.sixMinutesForSafety}](${misc.links.sixMinutesForSafety})
+The Six Minutes for Safety topic of the day is [${misc.smfs}](${misc.links.sixMinutesForSafety}).
+
+-# *All information in this morning report is real and taken from the NIFC IMSR under public domain copyright. Not to be used to protect life or property... but why would you?*
 				`,
-				color: 7340032,
-				footer: {
-					text: `Hellfire Helibase`,
-				},
-			},
-			{
-				title: "Storm Prediction Center ~ Convective Outlook",
-				image: {
-					url: "https://www.spc.noaa.gov/products/outlook/day1otlk_1300.gif",
-				},
-				color: 7340032,
-				footer: {
-					text: `Hellfire Helibase`,
-				},
-			},
-			{
-				title: "Storm Prediction Center ~ Fire Weather Outlook",
-				image: {
-					url: "https://www.spc.noaa.gov/products/fire_wx/day1fireotlk-overview.gif",
-				},
 				color: 7340032,
 				footer: {
 					text: `Hellfire Helibase`,
@@ -449,7 +402,7 @@ The Six Minutes for Safety topic of the day is [${misc.sixMinutesForSafety}](${m
 		],
 	});
 
-	// sendWebhook(webhook, message);
+	sendWebhook(webhook, message);
 }
 
 async function sendWebhook(webhook, message) {
@@ -498,12 +451,6 @@ async function getOldPdf() {
 			info: data.info,
 			text: data.text,
 		};
-
-		// pdfParse(oldPdf).then(function (data) {
-		// 	pdfInfo =
-		// });
-
-		// return pdfInfo;
 	} catch (e) {
 		console.warn(
 			`${Ansi.BgYellow}${Ansi.Bright}${Ansi.Blink}WARNING:${Ansi.Reset} There was an error parsing sitreprt2 and its values have been set to empty strings.`
@@ -519,7 +466,7 @@ async function getOldPdf() {
 
 async function getWeather(lat, lon) {
 	try {
-		const headers = { "User-Agent": "email@example.com" };
+		const headers = { "User-Agent": "rocketheadvids@gmail.com" };
 
 		const pointUrl = `https://api.weather.gov/points/${lat},${lon}`;
 		const pointRes = await axios.get(pointUrl, { headers });
